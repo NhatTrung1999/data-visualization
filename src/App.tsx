@@ -88,7 +88,7 @@ const App: React.FC = () => {
     <div className=" flex h-screen">
       {/* sidebar */}
       {openSidebar ? (
-        <div className="w-sm overflow-y-auto">
+        <div className="w-xs overflow-y-auto">
           <div className="bg-blue-500 h-[70px] text-2xl font-bold flex justify-center items-center text-white">
             LYV
           </div>
@@ -96,7 +96,7 @@ const App: React.FC = () => {
             <div>
               <div className="text-lg font-bold text-blue-300">SQL Editor</div>
               <textarea
-                className="border w-full rounded-md outline-none border-blue-300 p-2 text-gray-400 font-semibold text-lg"
+                className="border w-full rounded-md outline-none border-gray-300 p-2 text-gray-400 font-semibold text-lg"
                 rows={5}
                 value={textarea}
                 onChange={handleChangeTextarea}
@@ -110,7 +110,7 @@ const App: React.FC = () => {
             </button>
             <div>
               <div className="text-lg font-bold text-blue-300">Columns</div>
-              <div className="h-40 border rounded-md border-blue-300 p-2 overflow-y-auto flex flex-col gap-2">
+              <div className="h-40 border rounded-md border-gray-300 p-2 overflow-y-auto flex flex-col gap-2">
                 {columns.map((column, i) => (
                   <label
                     key={i}
@@ -130,8 +130,10 @@ const App: React.FC = () => {
               </div>
             </div>
             <div>
-              <div className="text-lg font-bold text-blue-300">Type Report</div>
-              <select className="w-full border border-blue-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
+              <div className="text-lg font-bold text-blue-300">
+                Aggregate Functions
+              </div>
+              <select className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
                 <option value="">Choose option</option>
                 <option value="">Sum</option>
                 <option value="">Average</option>
@@ -573,7 +575,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="w-full h-[500px] bg-white rounded-md p-2 mt-2 flex flex-col gap-2">
-            <div className="text-lg font-bold text-blue-300">Charts</div>
+            <div className="text-lg font-bold text-blue-300">Chart</div>
             <ResponsiveContainer width={'100%'} height={'100%'}>
               <LineChart
                 width={500}
@@ -604,14 +606,43 @@ const App: React.FC = () => {
         </div>
 
         {openChart && (
-          <div className="w-[300px] h-[calc(100%-70px)] bg-slate-100 absolute right-0 bottom-0 p-2">
-            <select className="w-full border border-blue-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
+          <div className="w-[300px] h-[calc(100%-70px)] bg-slate-100 border-l border-t border-gray-300 absolute right-0 bottom-0 p-2">
+            <div className="text-lg font-bold text-blue-300 text-center p-2">
+              Chart Visualization
+            </div>
+            <select className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
               <option value="">No visualization</option>
               <option value="">Bar</option>
               <option value="">Line</option>
               <option value="">Pie</option>
               <option value="">Scatter plot</option>
             </select>
+
+            <div className="text-lg font-bold text-blue-300 text-center mt-2">
+              Properties
+            </div>
+            <div className="flex flex-col gap-2">
+              <div>
+                <div className="text-lg font-bold text-blue-300">X Axis</div>
+                <select className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
+                  <option value="">No visualization</option>
+                  <option value="">Bar</option>
+                  <option value="">Line</option>
+                  <option value="">Pie</option>
+                  <option value="">Scatter plot</option>
+                </select>
+              </div>
+              <div>
+                <div className="text-lg font-bold text-blue-300">Y Axis</div>
+                <select className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
+                  <option value="">No visualization</option>
+                  <option value="">Bar</option>
+                  <option value="">Line</option>
+                  <option value="">Pie</option>
+                  <option value="">Scatter plot</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
       </div>
