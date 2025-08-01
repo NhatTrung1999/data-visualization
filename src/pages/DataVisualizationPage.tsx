@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoMenu } from 'react-icons/io5';
 import { FaChartColumn } from 'react-icons/fa6';
 import axios from 'axios';
@@ -71,19 +71,35 @@ interface ISearchParams {
 const DataVisualizationPage = () => {
   const [searchParams] = useSearchParams();
 
-  const params: ISearchParams = {
+  let params: ISearchParams = {
     host: searchParams.get('host') || undefined,
     database: searchParams.get('database') || undefined,
     username: searchParams.get('username') || undefined,
     password: searchParams.get('password') || undefined,
     querysql: searchParams.get('querysql') || undefined,
   };
-  console.log(format(params.querysql || '', { language: 'sql' }));
 
   const [openSidebar, setOpenSidebar] = useState(true);
   const [openChart, setOpenChart] = useState<boolean>(false);
   const [textarea, setTextarea] = useState<string | undefined>(params.querysql);
   const [columns, setColumns] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:3001/data-visualization',
+          params
+        );
+        // console.log(response.data);
+        setColumns(response.data.columns)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleOpenSidebar = () => {
     setOpenSidebar(!openSidebar);
@@ -95,10 +111,12 @@ const DataVisualizationPage = () => {
 
   const handleQuery = async () => {
     const response = await axios.post(
-      'http://localhost:3001/sql/execute-query',
-      { query: textarea }
+      'http://localhost:3001/data-visualization',
+      params
     );
-    setColumns(response.data.columns);
+
+    console.log(response.data);
+    // setColumns(response.data.columns);
   };
 
   const handleCharts = () => {
@@ -113,7 +131,7 @@ const DataVisualizationPage = () => {
             LYV
           </div>
           <div className="p-2 flex flex-col gap-2">
-            <div>
+            {/* <div>
               <div className="text-lg font-bold text-blue-300">SQL Editor</div>
               <textarea
                 className="border w-full rounded-md outline-none border-gray-300 p-2 text-gray-400 font-semibold text-lg"
@@ -127,10 +145,10 @@ const DataVisualizationPage = () => {
               onClick={handleQuery}
             >
               Query
-            </button>
+            </button> */}
             <div>
               <div className="text-lg font-bold text-blue-300">Columns</div>
-              <div className="h-40 border rounded-md border-gray-300 p-2 overflow-y-auto flex flex-col gap-2">
+              <div className="h-96 border rounded-md border-gray-300 p-2 overflow-y-auto flex flex-col gap-2">
                 {columns.map((column, i) => (
                   <label
                     key={i}
