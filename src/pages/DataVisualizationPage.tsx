@@ -13,7 +13,6 @@ import {
   YAxis,
 } from 'recharts';
 import { useSearchParams } from 'react-router-dom';
-import { format } from 'sql-formatter';
 
 const data = [
   {
@@ -81,8 +80,9 @@ const DataVisualizationPage = () => {
 
   const [openSidebar, setOpenSidebar] = useState(true);
   const [openChart, setOpenChart] = useState<boolean>(false);
-  const [textarea, setTextarea] = useState<string | undefined>(params.querysql);
+  // const [textarea, setTextarea] = useState<string | undefined>(params.querysql);
   const [columns, setColumns] = useState<string[]>([]);
+  const [checkedColumns, setCheckedColumns] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,8 +91,8 @@ const DataVisualizationPage = () => {
           'http://localhost:3001/data-visualization',
           params
         );
-        // console.log(response.data);
-        setColumns(response.data.columns)
+        console.log(response.data);
+        setColumns(response.data.columns);
       } catch (error) {
         console.error(error);
       }
@@ -105,23 +105,36 @@ const DataVisualizationPage = () => {
     setOpenSidebar(!openSidebar);
   };
 
-  const handleChangeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTextarea(e.target.value);
-  };
+  // const handleChangeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   setTextarea(e.target.value);
+  // };
 
-  const handleQuery = async () => {
-    const response = await axios.post(
-      'http://localhost:3001/data-visualization',
-      params
-    );
+  // const handleQuery = async () => {
+  //   const response = await axios.post(
+  //     'http://localhost:3001/data-visualization',
+  //     params
+  //   );
 
-    console.log(response.data);
-    // setColumns(response.data.columns);
-  };
+  //   console.log(response.data);
+  //   // setColumns(response.data.columns);
+  // };
 
   const handleCharts = () => {
     setOpenChart(!openChart);
   };
+
+  const handleCheckboxChange = (column: string) => {
+    setCheckedColumns((prev) =>
+      prev.includes(column)
+        ? prev.filter((col) => col !== column)
+        : [...prev, column]
+    );
+  };
+
+  const handleCreateTable = () => {
+    console.log('Create table with columns:', checkedColumns);
+  };
+
   return (
     <div className=" flex h-screen">
       {/* sidebar */}
@@ -159,6 +172,8 @@ const DataVisualizationPage = () => {
                       type="checkbox"
                       id={`column-${i}`}
                       className="size-4 accent-blue-500"
+                      checked={checkedColumns.includes(column)}
+                      onChange={() => handleCheckboxChange(column)}
                     />
                     <div className="text-base font-semibold text-blue-400">
                       {column}
@@ -190,8 +205,11 @@ const DataVisualizationPage = () => {
                 <option value="">Scatter plot</option>
               </select>
             </div> */}
-            <button className="bg-blue-400 w-full text-white font-bold py-2 text-base rounded-md cursor-pointer">
-              Create Report
+            <button
+              className="bg-blue-400 w-full text-white font-bold py-2 text-base rounded-md cursor-pointer"
+              onClick={handleCreateTable}
+            >
+              Create Table
             </button>
           </div>
         </div>
@@ -215,7 +233,7 @@ const DataVisualizationPage = () => {
           </div>
         </div>
         <div className="bg-gray-300 flex-1 p-2 overflow-y-auto">
-          <div className="w-full h-[500px] bg-white rounded-md p-2 flex flex-col gap-2">
+          <div className="w-full h-[700px] bg-white rounded-md p-2 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <div className="text-lg font-bold text-blue-300">Table</div>
 
