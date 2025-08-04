@@ -22,51 +22,6 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
-
 interface ISearchParams {
   host?: string;
   database?: string;
@@ -98,6 +53,9 @@ const DataVisualizationPage = () => {
   const [chartType, setChartType] = useState<string>('line');
   const [xAxis, setXAxis] = useState<string>('');
   const [yAxis, setYAxis] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,11 +67,7 @@ const DataVisualizationPage = () => {
         setColumns(response.data.columns);
       } catch (error: any) {
         console.error(error);
-        toast.error(
-          `Error fetching columns: ${
-            error.response?.data?.message || error.message
-          }`
-        );
+        toast.error(`${error.response?.data?.message || error.message}`);
       }
     };
 
@@ -158,26 +112,40 @@ const DataVisualizationPage = () => {
           checkedColumns,
           aggregateFunction,
           topNCount: aggregateFunction === 'TOP_N' ? topNCount : undefined,
+          clause,
+          page,
+          limit,
         }
       );
-      console.log(response.data);
       setHeadTables(response.data.columns);
       setBodyTables(response.data.data);
+      setTotalRecords(response.data.totalRecords);
       // Set default X and Y axis
+
       setXAxis(response.data.columns[0] || '');
       setYAxis(response.data.columns[1] || '');
     } catch (error: any) {
       console.error('Error creating table:', error);
-      toast.error(
-        `Error creating table: ${
-          error.response?.data?.message || error.message
-        }`
-      );
+      toast.error(`${error.response?.data?.message || error.message}`);
+    }
+    // console.log(clause);
+  };
+
+  const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLimit(Number(e.target.value));
+    setPage(1);
+    handleCreateTable();
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= Math.ceil(totalRecords / limit)) {
+      setPage(newPage);
+      handleCreateTable();
     }
   };
 
   const renderChart = () => {
-    const chartData = bodyTables.length > 0 ? bodyTables : data;
+    const chartData = bodyTables.length > 0 ? bodyTables : [];
     const colors = ['#8884d8', '#82ca9d', '#ffc107', '#ff7300', '#00C49F'];
 
     switch (chartType) {
@@ -266,16 +234,63 @@ const DataVisualizationPage = () => {
           </ScatterChart>
         );
       default:
-        // Always return a valid React element
         return <div style={{ width: '100%', height: '100%' }} />;
     }
+  };
+
+  const renderPageNumbers = () => {
+    const totalPages = Math.ceil(totalRecords / limit);
+    const pages: (number | string)[] = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      if (page > 3) {
+        pages.push('...');
+      }
+      const startPage = Math.max(2, page - 1);
+      const endPage = Math.min(totalPages - 1, page + 1);
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      if (page < totalPages - 2) {
+        pages.push('...');
+      }
+      pages.push(totalPages);
+    }
+
+    return pages.map((p, index) =>
+      p === '...' ? (
+        <li
+          key={`ellipsis-${index}`}
+          className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300"
+        >
+          ...
+        </li>
+      ) : (
+        <li key={p}>
+          <button
+            onClick={() => handlePageChange(p as number)}
+            className={`flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
+              p === page ? 'text-blue-600 bg-blue-50' : 'text-gray-500 bg-white'
+            }`}
+          >
+            {p}
+          </button>
+        </li>
+      )
+    );
   };
 
   return (
     <div className="flex h-screen">
       {/* sidebar */}
       {openSidebar ? (
-        <div className="w-xs overflow-y-auto">
+        <div className="2xl:w-xs xl:w-ws lg:w-3xs overflow-auto">
           <div className="bg-blue-500 h-[70px] text-2xl font-bold flex justify-center items-center text-white">
             LYV
           </div>
@@ -329,7 +344,7 @@ const DataVisualizationPage = () => {
               >
                 <option value="">Choose option</option>
                 <option value="GROUP BY">Group By</option>
-                <option value="ORDER BY">Order By</option>
+                {/* <option value="ORDER BY">Order By</option> */}
               </select>
             </div>
             {aggregateFunction === 'TOP_N' && (
@@ -375,12 +390,17 @@ const DataVisualizationPage = () => {
             <FaChartColumn />
           </div>
         </div>
+
         <div className="bg-gray-300 flex-1 p-2 overflow-y-auto max-w-full">
-          <div className="w-full h-[700px] bg-white rounded-md p-2 flex flex-col gap-2">
+          <div className="max-w-full h-[700px] bg-white rounded-md p-2 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <div className="text-lg font-bold text-blue-300">Table</div>
               <form className="max-w-[60px] font-semibold">
-                <select className="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-md block w-full p-1">
+                <select
+                  value={limit}
+                  onChange={handleLimitChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-md block w-full p-1 outline-none"
+                >
                   <option value="10">10</option>
                   <option value="25">25</option>
                   <option value="50">50</option>
@@ -388,8 +408,8 @@ const DataVisualizationPage = () => {
                 </select>
               </form>
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg flex-1 max-w-[1200px]">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 min-w-max table-auto">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg flex-1 w-full 2xl:max-w-[1600px] xl:max-w-[1099px] lg:max-w-[747px] whitespace-nowrap mx-auto">
+              <table className="text-sm text-left rtl:text-right text-gray-500 table-auto min-w-full">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
                   <tr>
                     {headTables.map((headTable, i) => (
@@ -421,13 +441,20 @@ const DataVisualizationPage = () => {
             >
               <span className="text-sm text-gray-500 font-semibold">
                 Showing{' '}
-                <span className="font-semibold text-gray-900">1-10</span> of{' '}
-                <span className="font-semibold text-gray-900">1000</span>
+                <span className="font-semibold text-gray-900">
+                  {(page - 1) * limit + 1}-
+                  {Math.min(page * limit, totalRecords)}
+                </span>{' '}
+                of{' '}
+                <span className="font-semibold text-gray-900">
+                  {totalRecords}
+                </span>
               </span>
               <ul className="inline-flex items-stretch -space-x-px font-semibold">
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1}
                     className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                   >
                     <span className="sr-only">Previous</span>
@@ -444,52 +471,13 @@ const DataVisualizationPage = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                  </a>
+                  </button>
                 </li>
+                {renderPageNumbers()}
                 <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    1
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    2
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    aria-current="page"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    3
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    ...
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    100
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === Math.ceil(totalRecords / limit)}
                     className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                   >
                     <span className="sr-only">Next</span>
@@ -506,15 +494,15 @@ const DataVisualizationPage = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                  </a>
+                  </button>
                 </li>
               </ul>
             </nav>
           </div>
 
-          <div className="w-full h-[500px] bg-white rounded-md p-2 mt-2 flex flex-col gap-2">
+          <div className="w-full min-h-[500px] bg-white rounded-md p-2 mt-2 flex flex-col gap-2">
             <div className="text-lg font-bold text-blue-300">Chart</div>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={500}>
               {renderChart()}
             </ResponsiveContainer>
           </div>
