@@ -56,6 +56,7 @@ const DataVisualizationPage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,7 +91,10 @@ const DataVisualizationPage = () => {
     );
   };
 
-  const handleCreateTable = async () => {
+  const handleCreateTable = async (
+    overrideLimit?: number,
+    overridePage?: number
+  ) => {
     if (checkedColumns.length === 0 || !aggregateFunction) {
       toast.warn('Please select columns and an aggregate function');
       return;
@@ -104,7 +108,16 @@ const DataVisualizationPage = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
+      const currentLimit = overrideLimit ?? limit;
+      const currentPage = overridePage ?? page;
+      console.log(
+        'Sending request with limit:',
+        currentLimit,
+        'page:',
+        currentPage
+      );
       const response = await axios.post(
         'http://localhost:3001/data-visualization/execute-query',
         {
@@ -113,34 +126,40 @@ const DataVisualizationPage = () => {
           aggregateFunction,
           topNCount: aggregateFunction === 'TOP_N' ? topNCount : undefined,
           clause,
-          page,
-          limit,
+          page: currentPage,
+          limit: currentLimit,
         }
       );
       setHeadTables(response.data.columns);
       setBodyTables(response.data.data);
       setTotalRecords(response.data.totalRecords);
-      // Set default X and Y axis
-
+      // Đảm bảo page hợp lệ
+      const totalPages = Math.ceil(response.data.totalRecords / currentLimit);
+      if (currentPage > totalPages) {
+        setPage(totalPages || 1);
+      }
+      console.log(response.data.columns);
       setXAxis(response.data.columns[0] || '');
       setYAxis(response.data.columns[1] || '');
     } catch (error: any) {
       console.error('Error creating table:', error);
       toast.error(`${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false);
     }
-    // console.log(clause);
   };
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLimit(Number(e.target.value));
+    const newLimit = Number(e.target.value);
+    setLimit(newLimit);
     setPage(1);
-    handleCreateTable();
+    handleCreateTable(newLimit, 1);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= Math.ceil(totalRecords / limit)) {
       setPage(newPage);
-      handleCreateTable();
+      handleCreateTable(undefined, newPage);
     }
   };
 
@@ -311,7 +330,10 @@ const DataVisualizationPage = () => {
                       checked={checkedColumns.includes(column)}
                       onChange={() => handleCheckboxChange(column)}
                     />
-                    <div className="text-base font-semibold text-blue-400">
+                    <div
+                      className="text-base font-semibold text-blue-400 truncate whitespace-nowrap"
+                      title={column}
+                    >
                       {column}
                     </div>
                   </label>
@@ -344,7 +366,6 @@ const DataVisualizationPage = () => {
               >
                 <option value="">Choose option</option>
                 <option value="GROUP BY">Group By</option>
-                {/* <option value="ORDER BY">Order By</option> */}
               </select>
             </div>
             {aggregateFunction === 'TOP_N' && (
@@ -365,7 +386,8 @@ const DataVisualizationPage = () => {
             )}
             <button
               className="bg-blue-400 w-full text-white font-bold py-2 text-base rounded-md cursor-pointer"
-              onClick={handleCreateTable}
+              onClick={() => handleCreateTable()}
+              disabled={isLoading}
             >
               Create Table
             </button>
@@ -400,6 +422,7 @@ const DataVisualizationPage = () => {
                   value={limit}
                   onChange={handleLimitChange}
                   className="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-md block w-full p-1 outline-none"
+                  disabled={isLoading}
                 >
                   <option value="10">10</option>
                   <option value="25">25</option>
@@ -454,7 +477,7 @@ const DataVisualizationPage = () => {
                 <li>
                   <button
                     onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1}
+                    disabled={page === 1 || isLoading}
                     className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                   >
                     <span className="sr-only">Previous</span>
@@ -477,7 +500,9 @@ const DataVisualizationPage = () => {
                 <li>
                   <button
                     onClick={() => handlePageChange(page + 1)}
-                    disabled={page === Math.ceil(totalRecords / limit)}
+                    disabled={
+                      page === Math.ceil(totalRecords / limit) || isLoading
+                    }
                     className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                   >
                     <span className="sr-only">Next</span>
