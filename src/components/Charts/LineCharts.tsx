@@ -14,9 +14,20 @@ interface ILine {
   xAxis: string;
   propertiesCharts: string[];
   colors: string[];
+  type?: string;
+  legendType: string;
+  strokeWidth: number;
 }
 
-const LineCharts = ({ chartData, xAxis, propertiesCharts, colors }: ILine) => {
+const LineCharts = ({
+  chartData,
+  xAxis,
+  propertiesCharts,
+  colors,
+  type,
+  legendType,
+  strokeWidth,
+}: ILine) => {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <LineChart
@@ -33,10 +44,12 @@ const LineCharts = ({ chartData, xAxis, propertiesCharts, colors }: ILine) => {
         {propertiesCharts.map((column, index) => (
           <Line
             key={index}
-            type="monotone"
+            type={'monotone'}
             dataKey={column}
             stroke={colors[index % colors.length]}
             activeDot={{ r: 8 }}
+            legendType={'line'}
+            strokeWidth={strokeWidth}
           />
         ))}
       </LineChart>

@@ -44,6 +44,11 @@ const DataVisualizationPage = () => {
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  //line
+  const [type, setType] = useState<string>('')
+  const [legendType, setLegendType] = useState<string>('')
+  const [strokeWidth, setStrokeWidth] = useState<number>(0)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -276,6 +281,9 @@ const DataVisualizationPage = () => {
                 xAxis={xAxis}
                 yAxis={yAxis}
                 propertiesCharts={headTables}
+                type={type}
+                legendType={legendType}
+                strokeWidth={strokeWidth}
               />
             </div>
           </div>
@@ -290,6 +298,13 @@ const DataVisualizationPage = () => {
             setChartType={setChartType}
             setXAxis={setXAxis}
             setYAxis={setYAxis}
+
+            type={type}
+            setType={setType}
+            legendType={legendType}
+            setLegendType={setLegendType}
+            strokeWidth={strokeWidth}
+            setStrokeWidth={setStrokeWidth}
           />
         )}
       </div>
