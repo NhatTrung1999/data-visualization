@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { ChartVisualization, Sidebar } from '../components';
 import RenderCharts from '../components/RenderCharts';
 import { Pagination, TableVisualization } from '../components/Table';
+import type { CurveType } from 'recharts/types/shape/Curve';
+import type { LegendType } from 'recharts';
 
 interface ISearchParams {
   host?: string;
@@ -45,9 +47,9 @@ const DataVisualizationPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //line
-  const [type, setType] = useState<string>('')
-  const [legendType, setLegendType] = useState<string>('')
-  const [strokeWidth, setStrokeWidth] = useState<number>(0)
+  const [type, setType] = useState<CurveType>('monotone')
+  const [legendType, setLegendType] = useState<LegendType>('line')
+  const [strokeWidth, setStrokeWidth] = useState<number>(1)
 
   useEffect(() => {
     const fetchData = async () => {

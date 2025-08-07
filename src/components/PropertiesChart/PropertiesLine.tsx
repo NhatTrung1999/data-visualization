@@ -1,4 +1,6 @@
-import { legendTypeLines, lineTypes, strokeWidthLines } from "../../utils/charts";
+import type { CurveType } from "recharts/types/shape/Curve";
+import { legendTypes, lineTypes, strokeWidthLines } from "../../utils/charts";
+import type { LegendType } from "recharts";
 
 interface IPropertiesLine {
   xAxis: string;
@@ -6,10 +8,10 @@ interface IPropertiesLine {
   axises: string[];
   yAxis: string;
   setYAxis: (value: string) => void;
-  type: string
-  setType: (value: string) => void
-  legendType: string
-  setLegendType: (value: string) => void
+  type?: CurveType
+  setType?: (value: CurveType) => void
+  legendType?: LegendType
+  setLegendType?: (value: LegendType) => void
   strokeWidth: number
   setStrokeWidth: (value: number) => void
 }
@@ -27,6 +29,7 @@ const PropertiesLine = ({
   strokeWidth,
   setStrokeWidth
 }: IPropertiesLine) => {
+  console.log(type);
   return (
     <div className="flex flex-col gap-2">
       <div>
@@ -61,8 +64,7 @@ const PropertiesLine = ({
       </div>
       <div>
         <div className="text-lg font-bold text-blue-300">Type</div>
-        <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
-          <option value="monotone">monotone</option>
+        <select value={type as string} onChange={(e) => setType?.(e.target.value as CurveType)} className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
           {lineTypes.map((item, index) => (
             <option key={index} value={item}>
               {item}
@@ -72,9 +74,8 @@ const PropertiesLine = ({
       </div>
       <div>
         <div className="text-lg font-bold text-blue-300">Legend Type</div>
-        <select value={legendType} onChange={(e) => setLegendType(e.target.value)} className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
-          <option value="line">line</option>
-          {legendTypeLines.map((item, index) => (
+        <select value={legendType as string} onChange={(e) => setLegendType?.(e.target.value as LegendType)} className="w-full border border-gray-300 py-1.5 rounded-md px-1 font-semibold text-gray-500 outline-none">
+          {legendTypes.map((item, index) => (
             <option key={index} value={item}>
               {item}
             </option>

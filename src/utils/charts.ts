@@ -1,4 +1,34 @@
-export const lineTypes: string[] = [
+type CustomCurveType =
+  | 'monotone'
+  | 'basis'
+  | 'basisClosed'
+  | 'basisOpen'
+  | 'bumpX'
+  | 'bumpY'
+  | 'bump'
+  | 'linear'
+  | 'linearClosed'
+  | 'natural'
+  | 'monotoneX'
+  | 'monotoneY'
+  | 'step'
+  | 'stepBefore'
+  | 'stepAfter';
+
+type CustomLegendType =
+  | 'circle'
+  | 'cross'
+  | 'diamond'
+  | 'line'
+  | 'plainline'
+  | 'rect'
+  | 'square'
+  | 'star'
+  | 'triangle'
+  | 'wye'
+  | 'none';
+
+export const lineTypes: CustomCurveType[] = [
   'basis',
   'basisClosed',
   'basisOpen',
@@ -8,21 +38,22 @@ export const lineTypes: string[] = [
   'linear',
   'linearClosed',
   'natural',
+  'monotone',
   'monotoneX',
   'monotoneY',
-  // 'monotone',
   'step',
   'stepBefore',
   'stepAfter',
 ];
 
-export const legendTypeLines: string[] = [
-  'plainline',
-  'square',
-  'rect',
+export const legendTypes: CustomLegendType[] = [
   'circle',
   'cross',
   'diamond',
+  'line',
+  'plainline',
+  'rect',
+  'square',
   'star',
   'triangle',
   'wye',

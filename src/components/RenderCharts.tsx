@@ -1,5 +1,6 @@
 import type { CurveType } from 'recharts/types/shape/Curve';
 import { BarCharts, LineCharts, PieCharts, ScatterCharts } from './Charts';
+import type { LegendType } from 'recharts';
 
 interface IRenderChart {
   chartType: string;
@@ -7,8 +8,8 @@ interface IRenderChart {
   xAxis: string;
   yAxis: string;
   propertiesCharts: string[];
-  type?: string;
-  legendType: string;
+  type?: CurveType;
+  legendType?: LegendType;
   strokeWidth: number;
 }
 
@@ -43,6 +44,7 @@ const RenderCharts = ({
           chartData={chartData}
           xAxis={xAxis}
           colors={colors}
+          legendType={legendType}
         />
       );
     case 'pie':
@@ -53,6 +55,7 @@ const RenderCharts = ({
           chartData={chartData}
           colors={colors}
           yAxis={yAxis}
+          legendType={legendType}
         />
       );
     case 'scatter':

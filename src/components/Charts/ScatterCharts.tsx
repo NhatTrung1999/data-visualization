@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -32,6 +33,7 @@ const ScatterCharts = ({
         <XAxis dataKey={xAxis || 'name'} />
         <YAxis dataKey={yAxis || propertiesCharts[0] || 'pv'} />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+        <Legend />
         <Scatter name="Data" data={chartData} fill="#8884d8" />
       </ScatterChart>
     </ResponsiveContainer>

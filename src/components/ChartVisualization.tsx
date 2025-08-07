@@ -1,4 +1,11 @@
+import type { CurveType } from 'recharts/types/shape/Curve';
 import PropertiesLine from './PropertiesChart/PropertiesLine';
+import type { LegendType } from 'recharts';
+import {
+  PropertiesBar,
+  PropertiesPie,
+  PropertiesScatter,
+} from './PropertiesChart';
 
 interface IChartVisualization {
   headTables: string[];
@@ -8,10 +15,10 @@ interface IChartVisualization {
   setChartType: (value: string) => void;
   setXAxis: (value: string) => void;
   setYAxis: (value: string) => void;
-  type: string;
-  setType: (value: string) => void;
-  legendType: string;
-  setLegendType: (value: string) => void;
+  type?: CurveType;
+  setType?: (value: CurveType) => void;
+  legendType?: LegendType;
+  setLegendType?: (value: LegendType) => void;
   strokeWidth: number;
   setStrokeWidth: (value: number) => void;
 }
@@ -50,11 +57,39 @@ const ChartVisualization = ({
           />
         );
       case 'bar':
-        return <div>bar</div>;
+        return (
+          <PropertiesBar
+            xAxis={xAxis}
+            yAxis={yAxis}
+            setXAxis={setXAxis}
+            setYAxis={setYAxis}
+            axises={headTables}
+            legendType={legendType}
+            setLegendType={setLegendType}
+          />
+        );
       case 'pie':
-        return <div>pie</div>;
+        return (
+          <PropertiesPie
+            xAxis={xAxis}
+            setXAxis={setXAxis}
+            yAxis={yAxis}
+            setYAxis={setYAxis}
+            axises={headTables}
+            legendType={legendType}
+            setLegendType={setLegendType}
+          />
+        );
       case 'scatter':
-        return <div>scatter</div>;
+        return (
+          <PropertiesScatter
+            xAxis={xAxis}
+            setXAxis={setXAxis}
+            yAxis={yAxis}
+            setYAxis={setYAxis}
+            axises={headTables}
+          />
+        );
       default:
         return <div></div>;
     }

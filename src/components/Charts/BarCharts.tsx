@@ -7,6 +7,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  type LegendType,
 } from 'recharts';
 
 interface IBar {
@@ -14,9 +15,10 @@ interface IBar {
   xAxis: string;
   propertiesCharts: string[];
   colors: string[];
+  legendType?: LegendType;
 }
 
-const BarCharts = ({ chartData, xAxis, propertiesCharts, colors }: IBar) => {
+const BarCharts = ({ chartData, xAxis, propertiesCharts, colors, legendType }: IBar) => {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <BarChart
@@ -35,7 +37,7 @@ const BarCharts = ({ chartData, xAxis, propertiesCharts, colors }: IBar) => {
             key={index}
             dataKey={column}
             fill={colors[index % colors.length]}
-            legendType="diamond"
+            legendType={legendType}
           />
         ))}
       </BarChart>
