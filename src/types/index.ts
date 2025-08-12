@@ -1,3 +1,5 @@
+import type React from "react";
+
 export type CurveType =
   | 'basis'
   | 'basisClosed'
@@ -14,3 +16,12 @@ export type CurveType =
   | 'step'
   | 'stepBefore'
   | 'stepAfter';
+
+
+
+export type NavItem = {
+  name: string;
+  icon: React.ReactNode;
+  path?: string;
+  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+};

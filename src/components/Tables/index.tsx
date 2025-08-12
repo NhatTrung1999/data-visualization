@@ -194,7 +194,7 @@ const tableData: Order[] = [
   },
 ];
 
-export default function TableView() {
+export default function TableView({ className }: { className?: string }) {
   const options = [
     { value: '10', label: '10' },
     { value: '25', label: '25' },
@@ -205,7 +205,7 @@ export default function TableView() {
     console.log('Selected value:', value);
   };
   return (
-    <Card title="Table View">
+    <Card title="Table View" className={className}>
       <div className="flex items-center justify-end">
         <div>
           <Select
@@ -216,7 +216,7 @@ export default function TableView() {
         </div>
       </div>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        <div className="max-w-full overflow-x-auto max-h-[500px] overflow-y-auto">
+        <div className="max-w-full overflow-x-auto max-h-[600px] overflow-y-auto">
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] sticky top-0 bg-white whitespace-nowrap">
               <TableRow>
