@@ -5,11 +5,11 @@ import Select from '../../components/ui/select';
 
 const Charts = () => {
   const options = [
-    { value: '', label: 'Choose options' },
-    { value: 'Column1', label: 'Column1' },
-    { value: 'Column2', label: 'Column2' },
-    { value: 'Column3', label: 'Column3' },
-    { value: 'Column4', label: 'Column4' },
+    { value: '', label: 'No visualization' },
+    { value: 'Line', label: 'Line' },
+    { value: 'Bar', label: 'Bar' },
+    { value: 'Pie', label: 'Pie' },
+    { value: 'Scatter', label: 'Scatter' },
   ];
   const handleSelectChange = (value: string) => {
     console.log('Selected value:', value);

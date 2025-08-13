@@ -90,9 +90,9 @@ const ChartsView = ({ className }: { className?: string }) => {
 
   return (
     <Card title="Chart View" className={className}>
-      <div className="max-w-full xl:overflow-x-auto custom-scrollbar">
+      <div className="max-w-full overflow-x-auto custom-scrollbar">
         <div id="chartOne" className="min-w-[1000px]">
-          <Chart options={options} series={series} type="bar" height={500} />
+          <Chart options={options} series={series} type="bar" height={550} />
         </div>
       </div>
     </Card>

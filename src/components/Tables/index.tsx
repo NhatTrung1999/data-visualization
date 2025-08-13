@@ -111,7 +111,7 @@ const tableData: Order[] = [
     status: 'Active',
   },
   {
-    id: 1,
+    id: 6,
     user: {
       image: '/images/user/user-17.jpg',
       name: 'Lindsey Curtis',
@@ -129,7 +129,7 @@ const tableData: Order[] = [
     status: 'Active',
   },
   {
-    id: 2,
+    id: 7,
     user: {
       image: '/images/user/user-18.jpg',
       name: 'Kaiya George',
@@ -143,7 +143,7 @@ const tableData: Order[] = [
     status: 'Pending',
   },
   {
-    id: 3,
+    id: 8,
     user: {
       image: '/images/user/user-17.jpg',
       name: 'Zain Geidt',
@@ -157,7 +157,7 @@ const tableData: Order[] = [
     status: 'Active',
   },
   {
-    id: 4,
+    id: 9,
     user: {
       image: '/images/user/user-20.jpg',
       name: 'Abram Schleifer',
@@ -175,7 +175,7 @@ const tableData: Order[] = [
     status: 'Cancel',
   },
   {
-    id: 5,
+    id: 10,
     user: {
       image: '/images/user/user-21.jpg',
       name: 'Carla George',
@@ -205,7 +205,7 @@ export default function TableView({ className }: { className?: string }) {
     console.log('Selected value:', value);
   };
   return (
-    <Card title="Table View" className={className}>
+    <Card title="Columns View" className={className}>
       <div className="flex items-center justify-end">
         <div>
           <Select

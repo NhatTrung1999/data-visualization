@@ -10,6 +10,7 @@ layer(base);
   --font-outfit: Outfit, sans-serif;
 
   --breakpoint-*: initial;
+  --breakpoint-3xsm: 320px;
   --breakpoint-2xsm: 375px;
   --breakpoint-xsm: 425px;
   --breakpoint-3xl: 2000px;

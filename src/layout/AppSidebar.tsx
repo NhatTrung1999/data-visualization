@@ -12,7 +12,7 @@ import {
 const navItems: NavItem[] = [
   {
     icon: <TableIcon />,
-    name: 'Table View',
+    name: 'Columns View',
     path: '/',
   },
   {
@@ -132,7 +132,7 @@ const AppSidebar = () => {
           ) : (
             nav.path && (
               <Link
-                to={nav.path}
+                to={`${nav.path}${location.search}`}
                 className={`menu-item group ${
                   isActive(nav.path) ? 'menu-item-active' : 'menu-item-inactive'
                 }`}
@@ -214,7 +214,9 @@ const AppSidebar = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 ${isExpanded || isMobileOpen ? "px-5" : ''} left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 ${
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 ${
+        isExpanded || isMobileOpen ? 'px-5' : ''
+      } left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 ${
         isExpanded || isMobileOpen ? 'w-[290px]' : 'w-0'
       } ${
         isExpanded || isMobileOpen ? 'translate-x-0' : '-translate-x-full'
