@@ -1,15 +1,16 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '../ui/table';
 
-import Badge from '../ui/badge/Badge';
+
 import Card from '../common/Card';
 import Select from '../ui/select';
 import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
+import Pagination from '../common/Pagination';
+
+const pageOptions: { value: string; label: string }[] = [
+  { value: '10', label: '10' },
+  { value: '25', label: '25' },
+  { value: '50', label: '50' },
+  { value: '100', label: '100' },
+];
 
 interface Order {
   id: number;
@@ -194,97 +195,89 @@ const tableData: Order[] = [
   },
 ];
 
-export default function TableView({ className }: { className?: string }) {
-  const options = [
-    { value: '10', label: '10' },
-    { value: '25', label: '25' },
-    { value: '50', label: '50' },
-    { value: '100', label: '100' },
-  ];
-  const handleSelectChange = (value: string) => {
-    console.log('Selected value:', value);
-  };
+export default function TableView({
+  page,
+  limit,
+  totalRecords,
+  className,
+  tableHeaders = [],
+  tableData = [],
+  handlePageChange
+}: {
+  page?: number;
+  limit?: number;
+  totalRecords?: number;
+  className?: string;
+  tableHeaders: string[];
+  tableData: any[];
+  handlePageChange: (value: string) => void
+}) {
+  
   return (
     <Card title="Columns View" className={className}>
       <div className="flex items-center justify-end">
         <div>
           <Select
-            options={options}
-            onChange={handleSelectChange}
+            options={pageOptions}
+            onChange={handlePageChange}
             placeholder="Select Option"
           />
         </div>
       </div>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        <div className="max-w-full overflow-x-auto max-h-[600px] overflow-y-auto">
-          <Table>
+        <div className="max-w-[1200px] overflow-x-auto h-[600px] overflow-y-auto">
+          <table className='whitespace-nowrap'>
+            <thead className='text-xs text-gray-700 uppercase bg-gray-100 sticky top-0'>
+              <tr>
+                {tableHeaders.map((tableHeader, i) => (
+                  <th scope="col" className="px-6 py-3" key={i}>
+                    {tableHeader}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className="bg-white border-b border-gray-200 hover:bg-gray-50"
+                >
+                  {tableHeaders.map((col, colIndex) => (
+                    <td key={colIndex} className="px-6 py-4">
+                      {row[col] || '-'}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] sticky top-0 bg-white whitespace-nowrap">
               <TableRow>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  User
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Project Name
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Team
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Budget
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  User
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Project Name
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Team
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Budget
-                </TableCell>
+                {tableHeaders.map((tableHeader, i) => (
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    key={i}
+                  >
+                    {tableHeader}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {tableData.map((order) => (
+            <TableBody> */}
+          {/* <TableRow>
+                <TableCell>dvfbdh</TableCell>
+              </TableRow> */}
+          {/* {tableData.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {tableHeaders.map((col, colIndex) => (
+                    <TableCell key={colIndex}>{row[col]}</TableCell>
+                  ))}
+                </TableRow>
+              ))} */}
+          {/* {tableData.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
@@ -345,12 +338,13 @@ export default function TableView({ className }: { className?: string }) {
                     {order.budget}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              ))} */}
+          {/* </TableBody>
+          </Table> */}
         </div>
       </div>
-      <div className="flex flex-row items-center justify-between">
+      {/* <Pagination page={page} limit={limit} totalRecords={totalRecords} handlePageChange={handlePageChange} /> */}
+      {/* <div className="flex flex-row items-center justify-between">
         <div className="text-sm">
           <span className="text-sm text-gray-500 font-semibold">
             Showing <span className="font-semibold text-gray-800">1-10</span> of{' '}
@@ -376,7 +370,7 @@ export default function TableView({ className }: { className?: string }) {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </Card>
   );
 }

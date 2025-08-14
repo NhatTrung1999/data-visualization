@@ -15,7 +15,6 @@ interface ISelectProps {
 
 const Select = ({
   options,
-  placeholder = "Select an option",
   onChange,
   className = "",
   defaultValue = "",

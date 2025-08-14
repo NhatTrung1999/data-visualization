@@ -4,7 +4,7 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 import dynamicSqlApi from '../api/dynamicSqlApi';
-import type { IDynamicSqlState, IParams } from '../types';
+import type { IDynamicSqlState, IExecuteQuery, IParams } from '../types';
 
 export const getColumns = createAsyncThunk(
   'dynamicSql/get-columns',
@@ -18,9 +18,33 @@ export const getColumns = createAsyncThunk(
   }
 );
 
+export const executeQuery = createAsyncThunk(
+  'dynamicSql/execute-query',
+  async (payload: IExecuteQuery, { rejectWithValue }) => {
+    try {
+      const response = await dynamicSqlApi.executeQuery(payload);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || '');
+    }
+  }
+);
+
 const initialState: IDynamicSqlState = {
   columnState: { columns: [], columnCount: 0 },
+  table: {
+    columns: [],
+    data: [],
+    limit: 0,
+    page: 0,
+    totalRecords: 0,
+  },
   checkedColumns: [],
+  aggregateFunction: '',
+  clauseOption: '',
+  topNCount: 5,
+  page: 1,
+  limit: 10,
   loading: false,
   error: null,
 };
@@ -33,6 +57,23 @@ const dynamicSqlSlice = createSlice({
       state.checkedColumns = state.checkedColumns.includes(action.payload)
         ? state.checkedColumns.filter((col) => col !== action.payload)
         : [...state.checkedColumns, action.payload];
+    },
+    setAggregateFunction: (state, action: PayloadAction<string>) => {
+      // console.log(action.payload);
+      state.aggregateFunction = action.payload
+    },
+    setClauseOption: (state, action: PayloadAction<string>) => {
+      // console.log(action.payload);
+      state.clauseOption = action.payload
+    },
+    setTopNCount: (state, action: PayloadAction<string>) => {
+      console.log(action.payload);
+    },
+    setPage: (state, action: PayloadAction<number>) => {
+      console.log(action.payload);
+    },
+    setLimit: (state, action: PayloadAction<number>) => {
+      console.log(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -49,9 +90,29 @@ const dynamicSqlSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
+
+    builder
+      .addCase(executeQuery.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(executeQuery.fulfilled, (state, action) => {
+        state.table = { ...action.payload };
+      })
+      .addCase(executeQuery.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { setCheckedColumns } = dynamicSqlSlice.actions;
+export const {
+  setCheckedColumns,
+  setAggregateFunction,
+  setClauseOption,
+  setTopNCount,
+  setPage,
+  setLimit,
+} = dynamicSqlSlice.actions;
 
 export default dynamicSqlSlice.reducer;
