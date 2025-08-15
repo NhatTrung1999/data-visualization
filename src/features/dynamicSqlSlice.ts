@@ -25,7 +25,8 @@ export const executeQuery = createAsyncThunk(
       const response = await dynamicSqlApi.executeQuery(payload);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || '');
+      // console.log(error);
+      return rejectWithValue(error.response.data.message || '');
     }
   }
 );
@@ -35,8 +36,8 @@ const initialState: IDynamicSqlState = {
   table: {
     columns: [],
     data: [],
-    limit: 0,
-    page: 0,
+    limit: 10,
+    page: 1,
     totalRecords: 0,
   },
   checkedColumns: [],
@@ -45,6 +46,7 @@ const initialState: IDynamicSqlState = {
   topNCount: 5,
   page: 1,
   limit: 10,
+  totalRecords: 0,
   loading: false,
   error: null,
 };
@@ -66,14 +68,17 @@ const dynamicSqlSlice = createSlice({
       // console.log(action.payload);
       state.clauseOption = action.payload
     },
-    setTopNCount: (state, action: PayloadAction<string>) => {
+    setTopNCount: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
+      state.topNCount = action.payload
     },
     setPage: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
+      state.page = action.payload
     },
     setLimit: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
+      state.limit = action.payload
     },
   },
   extraReducers: (builder) => {

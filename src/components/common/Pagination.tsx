@@ -1,10 +1,10 @@
 import { type ReactNode } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
+import RenderPageNumbers from './RenderPageNumbers';
 interface IPagination {
   page: number;
   limit: number;
   totalRecords: number;
-  //   isLoading: boolean;
   handlePageChange: (newPage: number) => void;
   renderPageNumbers?: () => ReactNode;
 }
@@ -37,11 +37,17 @@ const Pagination = ({
               <ChevronLeftIcon />
             </button>
           </li>
-          <li>
-            <button className=" border appearance-none px-3 py-1.25 text-sm shadow-theme-xs placeholder:text-gray-400 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30">
+          {/* <li>
+            <button className="border appearance-none px-3 py-1.25 text-sm shadow-theme-xs placeholder:text-gray-400 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30">
               1
             </button>
-          </li>
+          </li> */}
+          <RenderPageNumbers
+            limit={limit}
+            page={page}
+            totalRecords={totalRecords}
+            handlePageChange={handlePageChange}
+          />
           <li>
             <button
               onClick={() => handlePageChange(page + 1)}

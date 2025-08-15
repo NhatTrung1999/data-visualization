@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Provider store={store}>
         <App />
-        <ToastContainer />
+        <ToastContainer style={{zIndex: 100000}} />
       </Provider>
     </BrowserRouter>
   </StrictMode>

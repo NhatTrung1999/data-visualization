@@ -51,6 +51,7 @@ export interface IDynamicSqlState {
   topNCount: number;
   page: number;
   limit: number;
+  totalRecords: number;
   loading: boolean;
   error: string | null;
 }

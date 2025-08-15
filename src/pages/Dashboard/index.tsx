@@ -11,6 +11,7 @@ import {
   setAggregateFunction,
   setCheckedColumns,
   setClauseOption,
+  setLimit,
   setPage,
   setTopNCount,
 } from '../../features/dynamicSqlSlice';
@@ -18,6 +19,7 @@ import { useSearchParams } from 'react-router-dom';
 import type { IParams } from '../../types';
 import { setParams } from '../../features/paramsSlice';
 import Input from '../../components/ui/input';
+import { toast } from 'react-toastify';
 
 const excelFunctions: { value: string; label: string }[] = [
   { value: '', label: 'Choose option' },
@@ -30,8 +32,8 @@ const excelFunctions: { value: string; label: string }[] = [
 
 const clauseOptions: { value: string; label: string }[] = [
   { value: '', label: 'Choose option' },
-  { value: 'GROUP_BY', label: 'Group By' },
-  { value: 'ORDER_BY', label: 'Order By' },
+  { value: 'GROUP BY', label: 'Group By' },
+  { value: 'ORDER BY', label: 'Order By' },
 ];
 
 const Dashboard = () => {
@@ -43,6 +45,8 @@ const Dashboard = () => {
     clauseOption,
     page,
     topNCount,
+    limit,
+    error: errors
   } = useAppSelector((state) => state.dynamicSql);
   const dispatch = useAppDispatch();
 
@@ -75,17 +79,60 @@ const Dashboard = () => {
     dispatch(setClauseOption(value));
   };
 
-  const handlePageChange = (value: string) => {
+  const handlePageOptionsChange = (value: string) => {
     const newValue = Number(value);
-    dispatch(setPage(newValue));
+    dispatch(setLimit(newValue));
+    dispatch(setPage(1));
+    handleCreateTable(newValue, 1)
   };
 
-  const handleCreateTable = async () => {
-    // console.log(aggregateFunction, clauseOption, page, topNCount);
+  const handlePageChange = (newPage: number) => {
+    if (
+      newPage >= 1 &&
+      newPage <= Math.ceil(table.totalRecords / table.limit)
+    ) {
+      dispatch(setPage(newPage));
+      handleCreateTable(undefined, newPage);
+    }
+  };
+
+  const handleCreateTable = async (
+    overrideLimit?: number,
+    overridePage?: number
+  ) => {
     try {
-      await dispatch(executeQuery(params));
+      if (checkedColumns.length === 0 || !aggregateFunction) {
+        toast.warn('Please select columns and an aggregate function');
+        return;
+      }
+
+      if (
+        aggregateFunction === 'TOP_N' &&
+        (!topNCount || topNCount < 1 || topNCount > 1000)
+      ) {
+        toast.warn('Please enter a valid TOP N count (1-1000)');
+        return;
+      }
+
+      // console.log(params, aggregateFunction, topNCount, clauseOption, page, limit, checkedColumns);
+      // console.log(overrideLimit, overridePage);
+
+      const currentLimit = overrideLimit ?? limit;
+      const currentPage = overridePage ?? page;
+      await dispatch(
+        executeQuery({
+          ...params,
+          checkedColumns,
+          aggregateFunction,
+          topNCount: aggregateFunction === 'TOP_N' ? topNCount : undefined,
+          clause: clauseOption,
+          page: currentPage,
+          limit: currentLimit,
+        })
+      );
     } catch (error: any) {
-      console.log(error);
+      console.log(errors, error);
+      toast.error(error);
     }
   };
 
@@ -94,6 +141,10 @@ const Dashboard = () => {
       <TableView
         tableHeaders={table.columns}
         tableData={table.data}
+        limit={table.limit}
+        page={table.page}
+        totalRecords={table.totalRecords}
+        handlePageOptionsChange={handlePageOptionsChange}
         handlePageChange={handlePageChange}
         className="flex-1"
       />
@@ -138,12 +189,12 @@ const Dashboard = () => {
               type="number"
               min="0"
               value={topNCount}
-              onChange={(e) => dispatch(setTopNCount(e.target.value))}
+              onChange={(e) => dispatch(setTopNCount(Number(e.target.value)))}
             />
           </div>
         )}
         <button
-          onClick={handleCreateTable}
+          onClick={() => handleCreateTable()}
           rel="nofollow"
           className="flex items-center justify-center p-3 font-medium text-white rounded-lg bg-brand-500 text-theme-sm hover:bg-brand-600 w-full"
         >
