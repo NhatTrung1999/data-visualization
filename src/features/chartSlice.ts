@@ -2,6 +2,9 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface IChartState {
   optionChart: { value: string; label: string }[];
+  selectedChart: string;
+  xAxis: { value: string; label: string }[];
+  yAxis: { value: string; label: string }[];
 }
 
 const initialState: IChartState = {
@@ -12,20 +15,33 @@ const initialState: IChartState = {
     { value: 'Pie', label: 'Pie' },
     { value: 'Scatter', label: 'Scatter' },
   ],
+  selectedChart: '',
+  xAxis: [],
+  yAxis: [],
 };
 
 const chartSlice = createSlice({
   name: 'chart',
   initialState,
   reducers: {
-    setOptionChart: (state, action: PayloadAction<string>) => {
-      state.optionChart = state.optionChart.filter(
-        (item) => item.label === action.payload
-      );
+    setSelectedChart: (state, action: PayloadAction<string>) => {
+      state.selectedChart = action.payload;
+    },
+    setXAxis: (state, action: PayloadAction<string[]>) => {
+      state.xAxis = action.payload.map((item) => ({
+        value: item,
+        label: item,
+      }));
+    },
+    setYAxis: (state, action: PayloadAction<string[]>) => {
+      state.yAxis = action.payload.map((item) => ({
+        value: item,
+        label: item,
+      }));
     },
   },
 });
 
-export const { setOptionChart } = chartSlice.actions;
+export const { setSelectedChart, setXAxis, setYAxis } = chartSlice.actions;
 
 export default chartSlice.reducer;
