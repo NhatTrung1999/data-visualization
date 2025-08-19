@@ -13,7 +13,7 @@ export const getColumns = createAsyncThunk(
       const response = await dynamicSqlApi.getColumns(payload);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error || '');
+      return rejectWithValue(error.response.data.message || '');
     }
   }
 );
@@ -62,23 +62,23 @@ const dynamicSqlSlice = createSlice({
     },
     setAggregateFunction: (state, action: PayloadAction<string>) => {
       // console.log(action.payload);
-      state.aggregateFunction = action.payload
+      state.aggregateFunction = action.payload;
     },
     setClauseOption: (state, action: PayloadAction<string>) => {
       // console.log(action.payload);
-      state.clauseOption = action.payload
+      state.clauseOption = action.payload;
     },
     setTopNCount: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
-      state.topNCount = action.payload
+      state.topNCount = action.payload;
     },
     setPage: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
-      state.page = action.payload
+      state.page = action.payload;
     },
     setLimit: (state, action: PayloadAction<number>) => {
       console.log(action.payload);
-      state.limit = action.payload
+      state.limit = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -92,6 +92,7 @@ const dynamicSqlSlice = createSlice({
         state.columnState = action.payload;
       })
       .addCase(getColumns.rejected, (state, action) => {
+        console.log(console.log(action.payload));
         state.loading = false;
         state.error = action.payload as string;
       });

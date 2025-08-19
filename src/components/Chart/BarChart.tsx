@@ -1,8 +1,16 @@
 import type { ApexOptions } from 'apexcharts';
 import Card from '../common/Card';
 import Chart from 'react-apexcharts';
+import { useAppSelector } from '../../app/hooks';
 
 const BarChart = ({ className }: { className?: string }) => {
+  const { selectedXAxis, selectedYAxis } = useAppSelector(
+    (state) => state.chart
+  );
+  const {
+    table: { data },
+  } = useAppSelector((state) => state.dynamicSql);
+
   const options: ApexOptions = {
     colors: ['#465fff'],
     chart: {
@@ -30,20 +38,11 @@ const BarChart = ({ className }: { className?: string }) => {
       colors: ['transparent'],
     },
     xaxis: {
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ],
+      categories: data.map((item) => {
+        if (item[selectedXAxis] !== null) {
+          return item[selectedXAxis];
+        }
+      }),
       axisBorder: {
         show: false,
       },
@@ -83,8 +82,12 @@ const BarChart = ({ className }: { className?: string }) => {
   };
   const series = [
     {
-      name: 'Sales',
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: selectedXAxis,
+      data: data.map((item) => {
+        if (item[selectedYAxis] !== null) {
+          return item[selectedYAxis];
+        }
+      }),
     },
   ];
 

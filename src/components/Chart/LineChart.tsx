@@ -1,8 +1,16 @@
 import type { ApexOptions } from 'apexcharts';
 import Chart from 'react-apexcharts';
 import Card from '../common/Card';
+import { useAppSelector } from '../../app/hooks';
 
 const LineChart = ({ className }: { className?: string }) => {
+  const { selectedChartStroke, selectedXAxis, selectedYAxis } = useAppSelector(
+    (state) => state.chart
+  );
+  const {
+    table: { data },
+  } = useAppSelector((state) => state.dynamicSql);
+
   const options: ApexOptions = {
     chart: {
       height: 350,
@@ -10,42 +18,38 @@ const LineChart = ({ className }: { className?: string }) => {
       zoom: {
         enabled: false,
       },
+      toolbar: { show: false },
     },
     dataLabels: {
       enabled: false,
     },
     stroke: {
-      curve: 'straight',
+      curve: selectedChartStroke,
     },
-    // title: {
-    //   text: 'Product Trends by Month',
-    //   align: 'left',
-    // },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5,
       },
     },
     xaxis: {
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-      ],
+      categories: data.map((item) => {
+        if (item[selectedXAxis] !== null) {
+          return item[selectedXAxis];
+        }
+      }),
     },
+    
   };
 
   const series = [
     {
-      name: 'Desktops',
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+      name: selectedXAxis,
+      data: data.map((item) => {
+        if (item[selectedYAxis] !== null) {
+          return item[selectedYAxis];
+        }
+      }),
     },
   ];
 
@@ -53,7 +57,13 @@ const LineChart = ({ className }: { className?: string }) => {
     <Card title="Chart View" className={className}>
       <div className="max-w-full overflow-x-auto custom-scrollbar">
         <div id="chartEight" className="min-w-[1000px]">
-          <Chart options={options} series={series} type="line" height={500} />
+          <Chart
+            key={selectedXAxis}
+            options={options}
+            series={series}
+            type="line"
+            height={500}
+          />
         </div>
       </div>
     </Card>

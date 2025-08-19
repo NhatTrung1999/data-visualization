@@ -1,10 +1,15 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { ChartStroke } from '../types';
 
 interface IChartState {
   optionChart: { value: string; label: string }[];
   selectedChart: string;
   xAxis: { value: string; label: string }[];
+  selectedXAxis: string;
   yAxis: { value: string; label: string }[];
+  selectedYAxis: string;
+  chartStroke: { value: string; label: string }[];
+  selectedChartStroke?: ChartStroke;
 }
 
 const initialState: IChartState = {
@@ -17,7 +22,17 @@ const initialState: IChartState = {
   ],
   selectedChart: '',
   xAxis: [],
+  selectedXAxis: '',
   yAxis: [],
+  selectedYAxis: '',
+  chartStroke: [
+    { value: 'smooth', label: 'smooth' },
+    { value: 'straight', label: 'straight' },
+    { value: 'stepline', label: 'stepline' },
+    { value: 'linestep', label: 'linestep' },
+    { value: 'monotoneCubic', label: 'monotoneCubic' },
+  ],
+  selectedChartStroke: 'straight',
 };
 
 const chartSlice = createSlice({
@@ -39,9 +54,25 @@ const chartSlice = createSlice({
         label: item,
       }));
     },
+    setSelectedXAxis: (state, action: PayloadAction<string>) => {
+      state.selectedXAxis = action.payload;
+    },
+    setSelectedYAxis: (state, action: PayloadAction<string>) => {
+      state.selectedYAxis = action.payload;
+    },
+    setSelectedChartStroke: (state, action: PayloadAction<string>) => {
+      state.selectedChartStroke = action.payload as ChartStroke
+    }
   },
 });
 
-export const { setSelectedChart, setXAxis, setYAxis } = chartSlice.actions;
+export const {
+  setSelectedChart,
+  setXAxis,
+  setYAxis,
+  setSelectedXAxis,
+  setSelectedYAxis,
+  setSelectedChartStroke
+} = chartSlice.actions;
 
 export default chartSlice.reducer;

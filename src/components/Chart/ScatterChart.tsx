@@ -5,6 +5,7 @@ import type { ApexOptions } from 'apexcharts';
 const ScatterChart = ({ className }: { className?: string }) => {
   const options: ApexOptions = {
     chart: {
+      toolbar: { show: false },
       height: 350,
       type: 'scatter',
       zoom: {
@@ -16,6 +17,7 @@ const ScatterChart = ({ className }: { className?: string }) => {
       tickAmount: 10,
       labels: {
         formatter: function (val) {
+          console.log(val);
           return parseFloat(val).toFixed(1);
         },
       },

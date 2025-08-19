@@ -69,3 +69,11 @@ export interface IExecuteQuery {
   page?: number;
   limit?: number;
 }
+
+export type ChartStroke =
+  | 'smooth'
+  | 'straight'
+  | 'stepline'
+  | 'linestep'
+  | 'monotoneCubic'
+  | ('smooth' | 'straight' | 'stepline' | 'linestep' | 'monotoneCubic')[];
