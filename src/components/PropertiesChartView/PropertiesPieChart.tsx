@@ -18,7 +18,7 @@ const PropertiesPieChart = ({
   return (
     <>
       <div>
-        <Label>X Axis</Label>
+        <Label>Labels</Label>
         <Select
           options={xAxis}
           defaultValue={selectedXAxis}
@@ -26,7 +26,7 @@ const PropertiesPieChart = ({
         />
       </div>
       <div>
-        <Label>Y Axis</Label>
+        <Label>Value</Label>
         <Select
           options={yAxis}
           defaultValue={selectedYAxis}

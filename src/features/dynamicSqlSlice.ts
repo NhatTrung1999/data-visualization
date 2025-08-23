@@ -10,9 +10,11 @@ export const getColumns = createAsyncThunk(
   'dynamicSql/get-columns',
   async (payload: IParams, { rejectWithValue }) => {
     try {
+      // console.log(payload);
       const response = await dynamicSqlApi.getColumns(payload);
       return response;
     } catch (error: any) {
+      // console.log(error);
       return rejectWithValue(error.response.data.message || '');
     }
   }
@@ -92,7 +94,7 @@ const dynamicSqlSlice = createSlice({
         state.columnState = action.payload;
       })
       .addCase(getColumns.rejected, (state, action) => {
-        console.log(console.log(action.payload));
+        // console.log(action.payload);
         state.loading = false;
         state.error = action.payload as string;
       });

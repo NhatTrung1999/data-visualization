@@ -33,7 +33,7 @@ const excelFunctions: { value: string; label: string }[] = [
 const clauseOptions: { value: string; label: string }[] = [
   { value: '', label: 'Choose option' },
   { value: 'GROUP BY', label: 'Group By' },
-  { value: 'ORDER BY', label: 'Order By' },
+  // { value: 'ORDER BY', label: 'Order By' },
 ];
 
 const Dashboard = () => {
@@ -46,7 +46,6 @@ const Dashboard = () => {
     page,
     topNCount,
     limit,
-    error: errors
   } = useAppSelector((state) => state.dynamicSql);
   const dispatch = useAppDispatch();
 
@@ -83,7 +82,7 @@ const Dashboard = () => {
     const newValue = Number(value);
     dispatch(setLimit(newValue));
     dispatch(setPage(1));
-    handleCreateTable(newValue, 1)
+    handleCreateTable(newValue, 1);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -119,7 +118,7 @@ const Dashboard = () => {
 
       const currentLimit = overrideLimit ?? limit;
       const currentPage = overridePage ?? page;
-      await dispatch(
+      let result = await dispatch(
         executeQuery({
           ...params,
           checkedColumns,
@@ -130,11 +129,16 @@ const Dashboard = () => {
           limit: currentLimit,
         })
       );
+      if (executeQuery.rejected.match(result)) {
+        // console.log(result.payload);
+        toast.error(result.payload as string || 'An error occurred while executing the query');
+      }
     } catch (error: any) {
-      console.log(errors, error);
-      toast.error(error);
+      toast.error(error.message || 'An unexpected error occurred');
     }
   };
+
+  // console.log(errors);
 
   return (
     <div className="space-y-6 flex gap-6 xl:flex-row md:flex-col xsm:flex-col 2xsm:flex-col 3xsm:flex-col">

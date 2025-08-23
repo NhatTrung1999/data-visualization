@@ -18,7 +18,7 @@ const initialState: IChartState = {
     { value: 'Line', label: 'Line' },
     { value: 'Bar', label: 'Bar' },
     { value: 'Pie', label: 'Pie' },
-    { value: 'Scatter', label: 'Scatter' },
+    // { value: 'Scatter', label: 'Scatter' },
   ],
   selectedChart: '',
   xAxis: [],
